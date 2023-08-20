@@ -1,0 +1,82 @@
+// 1-bit ALU template
+module alu1bit (
+    input logic a,           // Input bit a
+    input logic b,           // Input bit b
+    input logic cin,         // Carry in
+    input logic [1:0] op,    // Operation
+    output logic s,          // Output S
+    output logic cout        // Carry out
+);
+
+// Put your code here
+// ------------------
+ logic g12,g34,g2m,g4m,gfm,g5f;
+    OR2 #(
+        .Tpdlh(5),
+        .Tpdhl(5)
+    ) instance1(
+        .Z(g12),
+        .A(a),
+        .B(b)
+    );
+
+
+   NAND2 #(
+        .Tpdlh(8),
+        .Tpdhl(8)
+    ) instance2(
+        .Z(g2m),
+        .A(g12),
+        .B(g12)
+    );
+
+
+  XNOR2 #(
+        .Tpdlh(4),
+        .Tpdhl(4)
+    ) instance3(
+        .Z(g34),
+        .A(a),
+        .B(b)
+    );
+
+NAND2 #(
+        .Tpdlh(8),
+        .Tpdhl(8)
+    ) instance4(
+        .Z(g4m),
+        .A(g34),
+        .B(g34)
+    );
+
+NAND2 #(
+        .Tpdlh(8),
+        .Tpdhl(8)
+    ) instance5(
+        .Z(g5f),
+        .A(op[0]),
+        .B(op[1])
+    );
+
+
+
+   fas #() instance6(
+        .a(a),
+        .b(b),
+        .cin(cin),
+        .a_ns(g5f),
+        .cout(cout),
+        .s(gfm)
+    );
+
+mux4 #() instance7(
+        .d0(g2m),
+        .d1(g4m),
+        .d2(gfm),
+        .d3(gfm),
+        .sel(op),
+        .z(s)
+    );
+// End of your code
+
+endmodule
