@@ -1,0 +1,47 @@
+// 64-bit ALU template
+module alu64bit (
+    input logic [63:0] a,    // Input bit a
+    input logic [63:0] b,    // Input bit b
+    input logic cin,         // Carry in
+    input logic [1:0] op,    // Operation
+    output logic [63:0] s,   // Output S
+    output logic cout        // Carry out
+);
+
+// Put your code here
+// ------------------
+    logic  [63 : 0] cintocout;
+                alu1bit #() inst0 (
+                    .a(a[0]),
+                    .b(b[0]),
+                    .cin(cin),
+                    .s(s[0]),
+                    .op(op),
+                    .cout(cintocout[0])
+                );
+alu1bit #() inst63 (
+                    .a(a[63]),
+                    .b(b[63]),
+                    .cin(cintocout[62]),
+                    .s(s[63]),
+                    .op(op),
+                    .cout(cout)
+                );
+genvar iterattor;
+    generate
+   for (iterattor=1 ; iterattor<63 ; iterattor++)
+            begin
+                alu1bit #() institerattor (
+                    .a(a[iterattor]),
+                    .b(b[iterattor]),
+                    .cin(cintocout[iterattor-1]),
+                    .s(s[iterattor]),
+                    .op(op),
+                    .cout(cintocout[iterattor])
+                );
+           end
+    endgenerate
+  
+// End of your code
+
+endmodule
